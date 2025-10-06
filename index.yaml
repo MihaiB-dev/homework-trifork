@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  trifork-bootstrap:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2025-10-06T23:38:00.4815423+02:00"
+    description: A Helm chart for Kubernetes
+    digest: ba930f88ead1f1670bb5630fcdcdeaff7a3bda29074d22bb2610f628d7c69f98
+    name: trifork-bootstrap
+    type: application
+    urls:
+    - https://MihaiB-dev.github.io/homework-trifork/trifork-bootstrap-0.1.0.tgz
+    version: 0.1.0
+generated: "2025-10-06T23:38:00.4805442+02:00"
