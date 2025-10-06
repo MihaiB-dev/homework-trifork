@@ -1,0 +1,28 @@
+# Do this code for the pods to have egress to the internet but not to other namespaces in the cluster
+{{- $tenant := default .Release.Name .Values.tenantName -}}
+{{- $podCIDR := .Values.clusterCidrs.podCIDR -}}
+{{- $svcCIDR := .Values.clusterCidrs.serviceCIDR -}}
+{{- range $ns := .Values.namespaces }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-internet-only
+  namespace: {{ printf "%s-%s" $tenant $ns }}
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+              - {{ $podCIDR }}   # block pod network
+              - {{ $svcCIDR }}   # block service ClusterIPs (incl. most in-cluster services)
+              - 10.0.0.0/8
+              - 192.168.0.0/16
+              - 172.16.0.0/12
+---
+{{- end }}
+
+# https://stackoverflow.com/questions/57789969/kubernetes-networkpolicy-allow-external-traffic-to-internet-only

@@ -1,0 +1,15 @@
+{{- $tenant := default .Release.Name .Values.tenantName -}} 
+{{- if not (kindIs "slice" .Values.namespaces) }}{{ fail "values.namespaces must be a list" }}{{- end }}
+
+{{- range $ns := .Values.namespaces }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ printf "%s-%s" $tenant $ns }}
+  labels:
+    tenant: {{ $tenant }}
+    env: {{ $ns }}
+  annotations:
+    hnc.x-k8s.io/parent: {{ $tenant }}
+---
+{{- end }}

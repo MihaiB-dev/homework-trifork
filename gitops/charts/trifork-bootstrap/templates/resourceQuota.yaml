@@ -1,0 +1,16 @@
+{{- $tenant := default .Release.Name .Values.tenantName }}
+{{- $tierKey := .Values.tenantTier | default "basic" }}
+{{- $tier := index .Values.tiers $tierKey }}
+{{- if not $tier }}{{ fail (printf "Unknown tenantTier %q" $tierKey) }}{{ end }}
+
+{{- range $ns := .Values.namespaces }}
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: {{ printf "%s-%s-quota" $tenant $ns }}
+  namespace: {{ printf "%s-%s" $tenant $ns }}
+spec:
+  hard:
+{{ toYaml $tier.hard | indent 4 }}
+---
+{{- end }}

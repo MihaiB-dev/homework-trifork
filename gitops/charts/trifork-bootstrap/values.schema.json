@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Tenant Bootstrap Values",
+  "type": "object",
+  "properties": {
+    "tenantName": {
+      "type": "string",
+      "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$",
+      "minLength": 2,
+      "maxLength": 63,
+      "description": "Tenant identifier; becomes parent namespace and a prefix for child namespaces."
+    },
+    "tenantTier": {
+      "type": "string",
+      "enum": ["basic", "premium", "enterprise"],
+      "description": "Quota tier for the tenant-wide HierarchicalResourceQuota."
+    },
+    "namespaces": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "List of environment suffixes (e.g., dev, prod)."
+    }
+  },
+  "required": ["tenantName", "tenantTier", "namespaces", "clusterCidrs"]
+}

@@ -1,0 +1,14 @@
+{{- $tenant := default .Release.Name .Values.tenantName -}}
+{{- range $ns := .Values.namespaces }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: {{ printf "%s-%s" $tenant $ns }}
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+{{- end }}

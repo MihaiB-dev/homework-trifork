@@ -1,0 +1,13 @@
+{{- $tenant := default .Release.Name .Values.tenantName -}}
+{{- $tierKey := .Values.tenantTier | default "basic" -}} 
+{{- $tier := index .Values.tiers $tierKey -}} # Get the tier configuration
+{{- if not $tier }}{{ fail (printf "Unknown tenantTier %q" $tierKey) }}{{ end -}} # Error if tier is unknown
+
+apiVersion: hnc.x-k8s.io/v1alpha2
+kind: HierarchicalResourceQuota
+metadata:
+  name: {{ $tenant }}-quota
+  namespace: {{ $tenant }}
+spec:
+  hard:
+{{ toYaml $tier.hard | indent 4 }}

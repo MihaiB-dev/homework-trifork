@@ -1,0 +1,7 @@
+{{- $tenant := default .Release.Name .Values.tenantName -}}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ $tenant }}
+  labels:
+    tenant: {{ $tenant }}
