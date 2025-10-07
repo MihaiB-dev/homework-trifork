@@ -1,0 +1,56 @@
+{{- if .Values.rbac.enabled }}
+{{- $tenant := default .Release.Name .Values.tenantName -}}
+{{- range $ns := .Values.namespaces }}
+# Admins
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ $tenant }}-admins
+  namespace: {{ printf "%s-%s" $tenant $ns }}
+  labels: { tenant: {{ $tenant }} }
+subjects:
+{{- range $.Values.rbac.subjects.admins }}
+  - kind: {{ .kind }}
+    name: {{ .name }}
+{{- end }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ $tenant }}-admin
+---
+# Developers
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ $tenant }}-developers
+  namespace: {{ printf "%s-%s" $tenant $ns }}
+  labels: { tenant: {{ $tenant }} }
+subjects:
+{{- range $.Values.rbac.subjects.developers }}
+  - kind: {{ .kind }}
+    name: {{ .name }}
+{{- end }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ $tenant }}-developer
+---
+# Viewers
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ $tenant }}-viewers
+  namespace: {{ printf "%s-%s" $tenant $ns }}
+  labels: { tenant: {{ $tenant }} }
+subjects:
+{{- range $.Values.rbac.subjects.viewers }}
+  - kind: {{ .kind }}
+    name: {{ .name }}
+{{- end }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ $tenant }}-viewer
+---
+{{- end }}
+{{- end }}

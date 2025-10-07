@@ -1,0 +1,38 @@
+{{- if .Values.rbac.enabled }}
+{{- $tenant := default .Release.Name .Values.tenantName -}}
+{{- range $ns := .Values.namespaces }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ $tenant }}-admin
+  namespace: {{ printf "%s-%s" $tenant $ns }}
+  labels: { tenant: {{ $tenant }} }
+rules:
+  - apiGroups: ["", "apps", "batch", "extensions", "autoscaling", "networking.k8s.io", "rbac.authorization.k8s.io"]
+    resources: {{ toJson $.Values.rbac.policies.admin.resources }}
+    verbs:     {{ toJson $.Values.rbac.policies.admin.verbs }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ $tenant }}-developer
+  namespace: {{ printf "%s-%s" $tenant $ns }}
+  labels: { tenant: {{ $tenant }} }
+rules:
+  - apiGroups: ["", "apps", "batch", "extensions", "autoscaling", "networking.k8s.io"]
+    resources: {{ toJson $.Values.rbac.policies.developer.resources }}
+    verbs:     {{ toJson $.Values.rbac.policies.developer.verbs }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ $tenant }}-viewer
+  namespace: {{ printf "%s-%s" $tenant $ns }}
+  labels: { tenant: {{ $tenant }} }
+rules:
+  - apiGroups: ["", "apps", "batch", "extensions", "networking.k8s.io"]
+    resources: {{ toJson $.Values.rbac.policies.viewer.resources }}
+    verbs:     {{ toJson $.Values.rbac.policies.viewer.verbs }}
+---
+{{- end }}
+{{- end }}
